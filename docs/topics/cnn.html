@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CNNs · SRSI Emerging Technologies Track</title>
+    <meta
+      name="description"
+      content="Watch CNN teaching videos section by section — Why CNNs, Convolution, Padding, Pooling, Pipeline. Download all as ZIP."
+    />
+    <link rel="stylesheet" href="../css/site.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="brand" href="../index.html">
+          <img src="../img/kaust-academy.png" alt="KAUST Academy" />
+          <div class="brand-text">
+            <strong>KAUST Academy</strong>
+            <span>SRSI Emerging Technologies Track</span>
+          </div>
+        </a>
+        <a class="nav-link" href="../index.html">← All topics</a>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <div class="topic-hero" id="topic-hero">
+        <!-- filled by JS -->
+      </div>
+
+      <nav class="section-nav" id="section-nav" aria-label="Sections"></nav>
+      <div id="sections"></div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <strong>KAUST Academy</strong> · SRSI Emerging Technologies Track · CNN module
+      </div>
+    </footer>
+
+    <script src="../js/topics-data.js"></script>
+    <script>
+      (function () {
+        const cnn = (window.SRSI.topics || []).find((t) => t.id === "cnn");
+        if (!cnn) return;
+
+        const hero = document.getElementById("topic-hero");
+        hero.innerHTML = `
+          <div>
+            <div class="hero-kicker">Module · CNN</div>
+            <h1>${cnn.title}</h1>
+            <p class="lede">${cnn.blurb}</p>
+          </div>
+          <div class="topic-actions">
+            <a class="btn btn-orange" href="../${cnn.zip}" download>Download all videos (.zip)</a>
+            <a class="btn btn-ghost" href="#${cnn.sections[0].id}">Start watching</a>
+          </div>
+        `;
+
+        const nav = document.getElementById("section-nav");
+        nav.innerHTML = cnn.sections
+          .map(
+            (s, i) =>
+              `<a href="#${s.id}"${i === 0 ? ' class="is-active"' : ""}>${s.title.replace(/^(\d+)\s*·\s*/, "$1 · ")}</a>`
+          )
+          .join("");
+
+        const root = document.getElementById("sections");
+        root.innerHTML = cnn.sections
+          .map((s) => {
+            const src = `../${cnn.videoDir}/${s.file}`;
+            return `
+            <article class="lesson-section" id="${s.id}" data-reveal>
+              <header>
+                <h2>${s.title}</h2>
+                <a class="btn btn-ghost btn-sm" href="${src}" download>Download video</a>
+              </header>
+              <p class="blurb">${s.blurb}</p>
+              <div class="video-shell">
+                <video class="lesson-video" controls preload="metadata" playsinline src="${src}">
+                  Your browser does not support HTML5 video.
+                </video>
+              </div>
+            </article>`;
+          })
+          .join("");
+      })();
+    </script>
+    <script src="../js/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,430 @@
+/* SRSI Emerging Technologies Track — site styles */
+:root {
+  --bg: #070f1c;
+  --bg-elevated: #0e1a2e;
+  --bg-card: #122038;
+  --line: rgba(255, 255, 255, 0.08);
+  --blue: #2b6cb0;
+  --blue-deep: #0b3d5c;
+  --blue-glow: rgba(43, 108, 176, 0.35);
+  --orange: #e87722;
+  --orange-soft: rgba(232, 119, 34, 0.18);
+  --text: #f5f7fa;
+  --muted: #9aa8bc;
+  --radius: 16px;
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --max: 1100px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(43, 108, 176, 0.28), transparent 55%),
+    radial-gradient(900px 500px at 90% 0%, rgba(11, 61, 92, 0.45), transparent 50%),
+    radial-gradient(700px 400px at 70% 100%, rgba(232, 119, 34, 0.08), transparent 45%),
+    var(--bg);
+  min-height: 100vh;
+  line-height: 1.55;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.wrap {
+  width: min(var(--max), calc(100% - 2.5rem));
+  margin-inline: auto;
+}
+
+/* —— Header —— */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(14px);
+  background: rgba(7, 15, 28, 0.82);
+  border-bottom: 1px solid var(--line);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.brand img {
+  height: 42px;
+  width: auto;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.25rem 0.4rem;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.brand-text strong {
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand-text span {
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nav-link {
+  color: var(--muted);
+  font-size: 0.9rem;
+  border: 1px solid var(--line);
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  border-color: var(--blue);
+  background: rgba(43, 108, 176, 0.15);
+}
+
+/* —— Hero —— */
+.hero {
+  padding: 3.5rem 0 2.5rem;
+}
+
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--orange);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  line-height: 1.08;
+  margin: 0 0 1rem;
+  max-width: 14ch;
+  font-weight: 750;
+}
+
+.hero h1 em {
+  font-style: normal;
+  color: transparent;
+  background: linear-gradient(120deg, #7eb6e8, #2b6cb0 45%, #e87722);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.hero p {
+  margin: 0;
+  max-width: 38rem;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+/* —— Topic cards —— */
+.section-label {
+  margin: 0 0 1.25rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.25rem;
+  padding-bottom: 4rem;
+}
+
+.topic-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem 1.4rem 1.35rem;
+  background: linear-gradient(160deg, var(--bg-card), var(--bg-elevated));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s, box-shadow 0.25s;
+}
+
+.topic-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), transparent 70%);
+}
+
+.topic-card.available:hover {
+  transform: translateY(-4px);
+  border-color: rgba(43, 108, 176, 0.55);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--blue-glow);
+}
+
+.topic-card.coming_soon {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.topic-card.coming_soon::before {
+  background: linear-gradient(90deg, #445, transparent 70%);
+}
+
+.topic-card h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.topic-card p {
+  margin: 0;
+  color: var(--muted);
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.badge {
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+}
+
+.badge.live {
+  background: var(--orange-soft);
+  color: var(--orange);
+}
+
+.badge.soon {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+}
+
+.card-cta {
+  margin-top: 0.35rem;
+  color: #9bc4ea;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* —— Buttons —— */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s, filter 0.15s, background 0.15s;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-orange {
+  background: linear-gradient(135deg, #f08a35, var(--orange));
+  color: #1a0d05;
+  box-shadow: 0 10px 28px rgba(232, 119, 34, 0.3);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.btn-sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* —— Topic page —— */
+.topic-hero {
+  padding: 2.5rem 0 1.5rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.topic-hero h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+.topic-hero .lede {
+  margin: 0;
+  color: var(--muted);
+  max-width: 40rem;
+}
+
+.topic-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.section-nav {
+  position: sticky;
+  top: 68px;
+  z-index: 30;
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.75rem 0;
+  margin-bottom: 1rem;
+  background: linear-gradient(180deg, rgba(7, 15, 28, 0.95), rgba(7, 15, 28, 0.75));
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: thin;
+}
+
+.section-nav a {
+  flex: 0 0 auto;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.section-nav a:hover,
+.section-nav a.is-active {
+  color: var(--text);
+  border-color: var(--orange);
+  background: var(--orange-soft);
+}
+
+.lesson-section {
+  margin: 0 0 2.75rem;
+  padding: 1.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.lesson-section header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.lesson-section h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.lesson-section .blurb {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+
+.video-shell {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--line);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.lesson-video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  background: #000;
+}
+
+/* —— Reveal —— */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* —— Footer —— */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 2rem 0 2.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.site-footer strong {
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  .brand-text strong {
+    font-size: 0.82rem;
+  }
+  .hero {
+    padding-top: 2.25rem;
+  }
+  .lesson-section {
+    padding: 1.1rem;
+  }
+}

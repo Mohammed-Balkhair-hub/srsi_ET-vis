@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SRSI Emerging Technologies Track · Visualizations</title>
+    <meta
+      name="description"
+      content="KAUST Academy SRSI Emerging Technologies Track — CNN visualizations and teaching videos."
+    />
+    <link rel="stylesheet" href="./css/site.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="brand" href="./index.html">
+          <img src="./img/kaust-academy.png" alt="KAUST Academy" />
+          <div class="brand-text">
+            <strong>KAUST Academy</strong>
+            <span>SRSI Emerging Technologies Track</span>
+          </div>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero wrap">
+        <h1>SRSI <em>Emerging Technologies</em></h1>
+      </section>
+
+      <section class="wrap">
+        <p class="section-label">Topics</p>
+        <div class="topic-grid" id="topic-grid"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <strong>KAUST Academy</strong> · SRSI Emerging Technologies Track · Visualization hub
+      </div>
+    </footer>
+
+    <script src="./js/topics-data.js"></script>
+    <script>
+      (function () {
+        const grid = document.getElementById("topic-grid");
+        const topics = (window.SRSI && window.SRSI.topics) || [];
+        grid.innerHTML = topics
+          .map((t) => {
+            const live = t.status === "available";
+            const inner = `
+              <span class="badge ${live ? "live" : "soon"}">${live ? "Available" : "Coming soon"}</span>
+              <h2>${t.title}</h2>
+              <p>${t.blurb || ""}</p>
+              ${live ? `<span class="card-cta">Open module →</span>` : ""}
+            `;
+            if (live) {
+              return `<a class="topic-card available" data-reveal href="./${t.href}">${inner}</a>`;
+            }
+            return `<div class="topic-card coming_soon" data-reveal aria-disabled="true">${inner}</div>`;
+          })
+          .join("");
+      })();
+    </script>
+    <script src="./js/site.js"></script>
+  </body>
+</html>
