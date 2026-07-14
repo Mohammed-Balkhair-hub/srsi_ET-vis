@@ -1,10 +1,14 @@
-# SRSI Emerging Technologies Track — Visualizations (`srsi_ET-vis`)
+# SRSI Emerging Technologies Track — Visualizations
 
-KAUST Academy **SRSI Emerging Technologies Track** hub: animated Manim lessons in the browser, hosted on **GitHub Pages**.
+KAUST Academy **SRSI Emerging Technologies Track** hub: animated Manim lessons you can watch in the browser, hosted on GitHub Pages.
 
-Live site (after Pages is enabled):
+| | Link |
+|---|---|
+| **Live site** | [https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/) |
+| **Repository** | [https://github.com/Mohammed-Balkhair-hub/srsi_ET-vis](https://github.com/Mohammed-Balkhair-hub/srsi_ET-vis) |
+| **CNN module** | [https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/cnn.html](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/cnn.html) |
 
-`https://<your-username>.github.io/srsi_ET-vis/`
+If the live site 404s, enable Pages once: **Settings → Pages → Deploy from a branch → `main` / `/docs`**.
 
 ---
 
@@ -12,25 +16,14 @@ Live site (after Pages is enabled):
 
 | Topic | Status |
 |-------|--------|
-| Convolutional Neural Networks | Available — 5 sections with in-page video + ZIP download |
+| [Convolutional Neural Networks](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/cnn.html) | Available — 5 sections, in-page video players, [ZIP download](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/downloads/cnn-videos.zip) |
 
 ---
 
-## Quick start (site)
-
-1. Create a GitHub repo named **`srsi_ET-vis`** and push this project.
-2. **Settings → Pages → Build and deployment**
-   - Source: **Deploy from a branch**
-   - Branch: `main`, folder: **/docs**
-3. Open `https://<your-username>.github.io/srsi_ET-vis/`
-
-No build step — `docs/` is the site root. Paths are relative so they work under `/srsi_ET-vis/`.
-
----
-
-## Develop / re-render videos
+## Clone & develop
 
 ```bash
+git clone https://github.com/Mohammed-Balkhair-hub/srsi_ET-vis.git
 cd srsi_ET-vis
 python3 -m venv .venv
 source .venv/bin/activate
@@ -41,7 +34,7 @@ chmod +x scripts/*.sh
 ./scripts/sync_site_videos.sh    # → docs/videos/cnn/ + docs/downloads/cnn-videos.zip
 ```
 
-One scene:
+Single scene:
 
 ```bash
 manim -pqh topics/cnn/theory/pooling.py Pooling
@@ -53,35 +46,31 @@ manim -pqh topics/cnn/theory/pooling.py Pooling
 
 ```
 srsi_ET-vis/
-├── docs/                     # GitHub Pages (github.io)
-│   ├── index.html            # Topic hub
-│   ├── topics/cnn.html       # Sectioned CNN watch page
-│   ├── videos/cnn/           # Streamed MP4s
+├── docs/                     # GitHub Pages root
+│   ├── index.html
+│   ├── topics/cnn.html
+│   ├── videos/cnn/
 │   ├── downloads/cnn-videos.zip
 │   ├── css/  js/  img/
 ├── topics/cnn/               # Manim sources
-│   ├── branding.py
-│   └── theory/
-├── assets/                   # Master logo + Day 9 PDF
+├── assets/
 ├── scripts/
-│   ├── render_all.sh
-│   └── sync_site_videos.sh
 └── README.md
 ```
 
 ---
 
-## Adding a future topic (e.g. Attention)
+## Adding another topic later
 
-1. Add an entry to `docs/js/topics-data.js` (`status: "available"`, `sections`, `zip`, `videoDir`).
-2. Add `docs/topics/attention.html` (mirror `cnn.html`).
-3. Put MP4s in `docs/videos/attention/` and zip under `docs/downloads/`.
-4. Optional: Manim under `topics/attention/`.
+1. Entry in `docs/js/topics-data.js`
+2. Page under `docs/topics/<id>.html`
+3. Videos in `docs/videos/<id>/` + zip in `docs/downloads/`
+4. Optional Manim under `topics/<id>/`
 
 ---
 
 ## Notes
 
-- Branding: KAUST Academy logo + **SRSI Emerging Technologies Track**.
-- Theme: dark blue / blue / white / orange.
-- Run Manim from the **repo root** so `assets/` resolves.
+- Branding: KAUST Academy logo + **SRSI Emerging Technologies Track**
+- Theme: dark blue / blue / white / orange
+- Run Manim from the **repo root** so `assets/` resolves
