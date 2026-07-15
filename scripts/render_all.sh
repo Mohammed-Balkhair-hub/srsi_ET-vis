@@ -49,9 +49,8 @@ declare -a RNN_JOBS=(
 
 declare -a ATT_JOBS=(
   "topics/attention/theory/why_attention.py|WhyAttention|attention|01_WhyAttention.mp4"
-  "topics/attention/theory/qkv_dims.py|QKVAndDims|attention|02_QKVAndDims.mp4"
-  "topics/attention/theory/scores_softmax.py|ScoresSoftmax|attention|03_ScoresSoftmax.mp4"
-  "topics/attention/theory/context_output.py|ContextOutput|attention|04_ContextOutput.mp4"
+  "topics/attention/theory/qkv_scores.py|QKVScores|attention|02_QKVScores.mp4"
+  "topics/attention/theory/context_output.py|ContextOutput|attention|03_ContextOutput.mp4"
 )
 
 JOBS=()

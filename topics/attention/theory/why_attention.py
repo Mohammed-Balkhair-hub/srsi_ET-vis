@@ -35,7 +35,10 @@ class WhyAttention(BrandScene):
         toks = ["the", "cat", "sat"]
         boxes = VGroup()
         for i, t in enumerate(toks):
-            b = RoundedRectangle(width=1.35, height=0.75, corner_radius=0.08, color=BLUE_D, fill_opacity=0.15, stroke_width=2.5)
+            b = RoundedRectangle(
+                width=1.35, height=0.75, corner_radius=0.08,
+                color=BLUE_D, fill_opacity=0.15, stroke_width=2.5,
+            )
             lab = Text(t, font="Sans", color=INK).scale(0.36).move_to(b)
             boxes.add(VGroup(b, lab).shift(RIGHT * (i - 1) * 2.1))
         arrows = VGroup(*[
@@ -64,30 +67,44 @@ class WhyAttention(BrandScene):
             font="Sans",
             weight=BOLD,
             color=ACCENT,
-        ).scale(0.42)
-        idea.move_to(UP * 1.4)
+        ).scale(0.40)
+        idea.move_to(UP * 1.55)
         self.play(Write(idea), run_time=1.3)
 
-        # Query sat looking at all
-        q = RoundedRectangle(width=1.4, height=0.7, corner_radius=0.08, color=ORANGE_D, fill_opacity=0.18, stroke_width=2.5)
-        q_l = Text("sat (query)", font="Sans", color=INK).scale(0.28).move_to(q)
-        q_g = VGroup(q, q_l).move_to(LEFT * 3.2 + DOWN * 0.1)
+        # Query left; keys stacked Vertically so arrows never overlap
+        q = RoundedRectangle(
+            width=1.55, height=0.75, corner_radius=0.08,
+            color=ORANGE_D, fill_opacity=0.18, stroke_width=2.5,
+        )
+        q_l = Text("sat (query)", font="Sans", color=INK).scale(0.30).move_to(q)
+        q_g = VGroup(q, q_l).move_to(LEFT * 3.4 + DOWN * 0.15)
 
         keys = VGroup()
-        for i, t in enumerate(toks):
-            b = RoundedRectangle(width=1.2, height=0.6, corner_radius=0.08, color=TEAL_D, fill_opacity=0.15, stroke_width=2)
-            lab = Text(t, font="Sans", color=INK).scale(0.30).move_to(b)
+        for t in toks:
+            b = RoundedRectangle(
+                width=1.35, height=0.55, corner_radius=0.08,
+                color=TEAL_D, fill_opacity=0.15, stroke_width=2,
+            )
+            lab = Text(t, font="Sans", color=INK).scale(0.32).move_to(b)
             keys.add(VGroup(b, lab))
-        keys.arrange(RIGHT, buff=0.35).move_to(RIGHT * 1.5 + DOWN * 0.1)
+        keys.arrange(DOWN, buff=0.28).move_to(RIGHT * 2.2 + DOWN * 0.15)
 
         self.play(FadeIn(q_g), FadeIn(keys), run_time=1.2)
-        links = VGroup(*[
-            Arrow(q_g.get_right(), keys[j].get_left(), buff=0.1, color=GOLD_D if j == 1 else MUTED, stroke_width=3 if j == 1 else 2)
-            for j in range(3)
-        ])
-        self.play(LaggedStart(*[GrowArrow(a) for a in links], lag_ratio=0.25), run_time=1.4)
-        ring = SurroundingRectangle(keys[1], color=GOLD_D, buff=0.06, stroke_width=3.5)
-        self.play(Create(ring), run_time=0.6)
+
+        # Three separate L→R arrows at distinct heights (no shared tip stack)
+        links = VGroup()
+        for j, key_box in enumerate(keys):
+            start = q_g.get_right() + DOWN * (j - 1) * 0.22
+            end = key_box.get_left()
+            color = GOLD_D if j == 1 else MUTED
+            width = 3.5 if j == 1 else 2.5
+            links.add(Arrow(start, end, buff=0.12, color=color, stroke_width=width, max_tip_length_to_length_ratio=0.12))
+
+        self.play(LaggedStart(*[GrowArrow(a) for a in links], lag_ratio=0.35), run_time=1.6)
+        ring = SurroundingRectangle(keys[1], color=GOLD_D, buff=0.07, stroke_width=3.5)
+        weight = Text("α larger → stronger look", font="Sans", color=GOLD_D).scale(0.28)
+        weight.next_to(keys[1], RIGHT, buff=0.25)
+        self.play(Create(ring), FadeIn(weight), run_time=0.7)
 
         self.say("α_{ij} says how much token i borrows from token j.", wait=1.5)
         key = terms_key([

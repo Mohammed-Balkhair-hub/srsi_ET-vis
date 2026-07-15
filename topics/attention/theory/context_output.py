@@ -51,7 +51,7 @@ def cell_at(grid: VGroup, cols: int, r: int, c: int) -> VGroup:
 
 
 class ContextOutput(BrandScene):
-    chapter_title = "4 · Context Vector (O = AV)"
+    chapter_title = "3 · Context Vector (O = AV)"
 
     def construct(self):
         self.setup_branding()

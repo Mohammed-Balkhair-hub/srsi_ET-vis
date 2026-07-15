@@ -53,9 +53,8 @@ case "$TOPIC" in
       04_RNNTasks.mp4
     sync_topic attention \
       01_WhyAttention.mp4 \
-      02_QKVAndDims.mp4 \
-      03_ScoresSoftmax.mp4 \
-      04_ContextOutput.mp4
+      02_QKVScores.mp4 \
+      03_ContextOutput.mp4
     ;;
   cnn)
     sync_topic cnn \
@@ -75,9 +74,8 @@ case "$TOPIC" in
   attention)
     sync_topic attention \
       01_WhyAttention.mp4 \
-      02_QKVAndDims.mp4 \
-      03_ScoresSoftmax.mp4 \
-      04_ContextOutput.mp4
+      02_QKVScores.mp4 \
+      03_ContextOutput.mp4
     ;;
   *)
     echo "Unknown topic: $TOPIC (use all|cnn|rnn|attention)" >&2
