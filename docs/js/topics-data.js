@@ -43,5 +43,40 @@ window.SRSI = {
         },
       ],
     },
+    {
+      id: "rnn",
+      title: "Recurrent Neural Networks",
+      blurb: "Why sequences need memory, one-step cell math, unrolling over time, and task shapes.",
+      status: "available",
+      href: "topics/rnn.html",
+      zip: "downloads/rnn-videos.zip",
+      videoDir: "videos/rnn",
+      sections: [
+        {
+          id: "why",
+          title: "1 · Why RNNs",
+          blurb: "Order matters in sequences — keep a hidden state that depends on the past.",
+          file: "01_WhyRNNs.mp4",
+        },
+        {
+          id: "cell",
+          title: "2 · One Timestep",
+          blurb: "Products → sum → tanh: W_xh x_t and W_hh h_{t-1} with shared weights.",
+          file: "02_RNNCellMath.mp4",
+        },
+        {
+          id: "unroll",
+          title: "3 · Unroll Over Time",
+          blurb: "Same cell for t = 1…3 — watch memory carry forward when x_t is zero.",
+          file: "03_UnrollSequence.mp4",
+        },
+        {
+          id: "tasks",
+          title: "4 · Tasks & Limits",
+          blurb: "Many-to-one vs many-to-many, plus vanishing-gradient intuition.",
+          file: "04_RNNTasks.mp4",
+        },
+      ],
+    },
   ],
 };

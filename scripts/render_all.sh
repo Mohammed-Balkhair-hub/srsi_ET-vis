@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
-# Render CNN Manim scenes at 1080p into exports/1080p/
-# Usage (from repo root): ./scripts/render_all.sh
+# Render Manim scenes at 1080p into exports/1080p/
+# Usage (from repo root):
+#   ./scripts/render_all.sh           # all topics
+#   ./scripts/render_all.sh cnn
+#   ./scripts/render_all.sh rnn
+#   QUALITY=l ./scripts/render_all.sh rnn   # quick smoke
 
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -8,6 +12,7 @@ cd "$ROOT"
 
 QUALITY="${QUALITY:-h}"
 FLAG="-q${QUALITY}"
+TOPIC="${1:-all}"
 
 if [[ -x "$ROOT/.venv/bin/manim" ]]; then
   MANIM="$ROOT/.venv/bin/manim"
@@ -29,15 +34,39 @@ case "$QUALITY" in
   *) RES_DIR="1080p60" ;;
 esac
 
-echo "Using: $MANIM ($FLAG → $RES_DIR)"
+echo "Using: $MANIM ($FLAG → $RES_DIR) topic=$TOPIC"
 
-declare -a JOBS=(
+declare -a CNN_JOBS=(
   "topics/cnn/theory/why_cnn.py|WhyCNNs|01_WhyCNNs.mp4"
   "topics/cnn/theory/convolution.py|ConvolutionMath|02_ConvolutionMath.mp4"
   "topics/cnn/theory/padding_stride.py|PaddingAndStride|03_PaddingAndStride.mp4"
   "topics/cnn/theory/pooling.py|Pooling|04_Pooling.mp4"
   "topics/cnn/theory/architecture.py|CNNPipeline|05_CNNPipeline.mp4"
 )
+
+declare -a RNN_JOBS=(
+  "topics/rnn/theory/why_rnn.py|WhyRNNs|01_WhyRNNs.mp4"
+  "topics/rnn/theory/cell_math.py|RNNCellMath|02_RNNCellMath.mp4"
+  "topics/rnn/theory/unroll.py|UnrollSequence|03_UnrollSequence.mp4"
+  "topics/rnn/theory/tasks.py|RNNTasks|04_RNNTasks.mp4"
+)
+
+JOBS=()
+case "$TOPIC" in
+  all)
+    JOBS=("${CNN_JOBS[@]}" "${RNN_JOBS[@]}")
+    ;;
+  cnn)
+    JOBS=("${CNN_JOBS[@]}")
+    ;;
+  rnn)
+    JOBS=("${RNN_JOBS[@]}")
+    ;;
+  *)
+    echo "Unknown topic: $TOPIC (use all|cnn|rnn)" >&2
+    exit 1
+    ;;
+esac
 
 for job in "${JOBS[@]}"; do
   IFS='|' read -r file scene export_name <<<"$job"
@@ -55,5 +84,5 @@ for job in "${JOBS[@]}"; do
 done
 
 echo ""
-echo "Done. Optionally sync to the website:"
-echo "  ./scripts/sync_site_videos.sh"
+echo "Done. Sync to the website:"
+echo "  ./scripts/sync_site_videos.sh $TOPIC"

@@ -1,32 +1,78 @@
 #!/usr/bin/env bash
-# Copy rendered CNN MP4s into docs/ for GitHub Pages + build ZIP download.
-# Usage (from repo root): ./scripts/sync_site_videos.sh
+# Copy rendered MP4s into docs/ for GitHub Pages + build ZIP downloads.
+# Usage (from repo root):
+#   ./scripts/sync_site_videos.sh           # all topics
+#   ./scripts/sync_site_videos.sh cnn
+#   ./scripts/sync_site_videos.sh rnn
 
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SRC="$ROOT/exports/1080p"
-VID="$ROOT/docs/videos/cnn"
-ZIP_DIR="$ROOT/docs/downloads"
-ZIP="$ZIP_DIR/cnn-videos.zip"
+TOPIC="${1:-all}"
 
-mkdir -p "$VID" "$ZIP_DIR"
+sync_topic() {
+  local id="$1"
+  shift
+  local vid="$ROOT/docs/videos/$id"
+  local zip="$ROOT/docs/downloads/${id}-videos.zip"
+  mkdir -p "$vid" "$ROOT/docs/downloads"
 
-shopt -s nullglob
-files=("$SRC"/0*.mp4)
-if ((${#files[@]} == 0)); then
-  echo "No MP4s in exports/1080p/. Run ./scripts/render_all.sh first." >&2
-  exit 1
-fi
+  local files=()
+  local name
+  for name in "$@"; do
+    local f="$SRC/$name"
+    if [[ ! -f "$f" ]]; then
+      echo "ERROR: missing $f — run ./scripts/render_all.sh $id first" >&2
+      exit 1
+    fi
+    files+=("$f")
+  done
 
-echo "Syncing ${#files[@]} videos → docs/videos/cnn/"
-cp -f "${files[@]}" "$VID/"
+  echo "Syncing ${#files[@]} videos → docs/videos/$id/"
+  cp -f "${files[@]}" "$vid/"
 
-echo "Building $ZIP"
-rm -f "$ZIP"
-(
-  cd "$VID"
-  zip -q -j "$ZIP" ./*.mp4
-)
+  echo "Building $zip"
+  rm -f "$zip"
+  (
+    cd "$vid"
+    zip -q -j "$zip" "$@"
+  )
+  ls -lh "$vid"/*.mp4 "$zip"
+}
+
+case "$TOPIC" in
+  all)
+    sync_topic cnn \
+      01_WhyCNNs.mp4 \
+      02_ConvolutionMath.mp4 \
+      03_PaddingAndStride.mp4 \
+      04_Pooling.mp4 \
+      05_CNNPipeline.mp4
+    sync_topic rnn \
+      01_WhyRNNs.mp4 \
+      02_RNNCellMath.mp4 \
+      03_UnrollSequence.mp4 \
+      04_RNNTasks.mp4
+    ;;
+  cnn)
+    sync_topic cnn \
+      01_WhyCNNs.mp4 \
+      02_ConvolutionMath.mp4 \
+      03_PaddingAndStride.mp4 \
+      04_Pooling.mp4 \
+      05_CNNPipeline.mp4
+    ;;
+  rnn)
+    sync_topic rnn \
+      01_WhyRNNs.mp4 \
+      02_RNNCellMath.mp4 \
+      03_UnrollSequence.mp4 \
+      04_RNNTasks.mp4
+    ;;
+  *)
+    echo "Unknown topic: $TOPIC (use all|cnn|rnn)" >&2
+    exit 1
+    ;;
+esac
 
 echo "Done."
-ls -lh "$VID"/*.mp4 "$ZIP"
