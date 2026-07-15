@@ -8,6 +8,7 @@ KAUST Academy **SRSI Emerging Technologies Track** hub: animated Manim lessons y
 | **Repository** | [https://github.com/Mohammed-Balkhair-hub/srsi_ET-vis](https://github.com/Mohammed-Balkhair-hub/srsi_ET-vis) |
 | **CNN module** | [https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/cnn.html](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/cnn.html) |
 | **RNN module** | [https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/rnn.html](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/rnn.html) |
+| **Attention module** | [https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/attention.html](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/attention.html) |
 
 If the live site 404s, enable Pages once: **Settings → Pages → Deploy from a branch → `main` / `/docs`**.
 
@@ -17,8 +18,9 @@ If the live site 404s, enable Pages once: **Settings → Pages → Deploy from a
 
 | Topic | Status |
 |-------|--------|
-| [Convolutional Neural Networks](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/cnn.html) | Available — 5 sections, in-page video players, [ZIP download](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/downloads/cnn-videos.zip) |
-| [Recurrent Neural Networks](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/rnn.html) | Available — 4 sections, in-page video players, [ZIP download](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/downloads/rnn-videos.zip) |
+| [Convolutional Neural Networks](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/cnn.html) | Available — 5 sections, [ZIP](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/downloads/cnn-videos.zip) |
+| [Recurrent Neural Networks](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/rnn.html) | Available — 4 sections, [ZIP](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/downloads/rnn-videos.zip) |
+| [Attention](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/attention.html) | Available — 4 sections, [ZIP](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/downloads/attention-videos.zip) |
 
 ---
 
@@ -32,14 +34,14 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 chmod +x scripts/*.sh
-./scripts/render_all.sh rnn      # or cnn | all  → exports/1080p/<topic>/
-./scripts/sync_site_videos.sh rnn
+./scripts/render_all.sh attention   # or cnn | rnn | all
+./scripts/sync_site_videos.sh attention
 ```
 
 Single scene:
 
 ```bash
-manim -pqh topics/rnn/theory/cell_math.py RNNCellMath
+manim -pqh topics/attention/theory/scores_softmax.py ScoresSoftmax
 ```
 
 ---
@@ -48,32 +50,15 @@ manim -pqh topics/rnn/theory/cell_math.py RNNCellMath
 
 ```
 srsi_ET-vis/
-├── docs/                     # GitHub Pages root
-│   ├── index.html
-│   ├── topics/cnn.html
-│   ├── topics/rnn.html
-│   ├── videos/cnn/  videos/rnn/
-│   ├── downloads/
-│   ├── css/  js/  img/
-├── exports/1080p/
-│   ├── cnn/                  # local CNN renders
-│   └── rnn/                  # local RNN renders
-├── topics/cnn/               # Manim sources
-├── topics/rnn/
+├── docs/
+│   ├── topics/cnn.html  rnn.html  attention.html
+│   ├── videos/cnn/  rnn/  attention/
+│   └── downloads/
+├── exports/1080p/cnn|rnn|attention/
+├── topics/cnn/  rnn/  attention/
 ├── assets/
-├── scripts/
-└── README.md
+└── scripts/
 ```
-
----
-
-## Adding another topic later
-
-1. Entry in `docs/js/topics-data.js`
-2. Page under `docs/topics/<id>.html`
-3. Videos in `docs/videos/<id>/` + zip in `docs/downloads/`
-4. Optional Manim under `topics/<id>/`
-5. Jobs in `scripts/render_all.sh` + `sync_site_videos.sh`
 
 ---
 

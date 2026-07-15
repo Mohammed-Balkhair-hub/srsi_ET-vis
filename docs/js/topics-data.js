@@ -78,5 +78,40 @@ window.SRSI = {
         },
       ],
     },
+    {
+      id: "attention",
+      title: "Attention",
+      blurb: "Why soft lookup beats an RNN bottleneck — Q, K, V, scores, softmax, and O = AV on a tiny sentence.",
+      status: "available",
+      href: "topics/attention.html",
+      zip: "downloads/attention-videos.zip",
+      videoDir: "videos/attention",
+      sections: [
+        {
+          id: "why",
+          title: "1 · Why Attention",
+          blurb: "RNN memory is a single chain; attention lets every token soft-look at every token.",
+          file: "01_WhyAttention.mp4",
+        },
+        {
+          id: "qkv",
+          title: "2 · Terms, Dims & QKV",
+          blurb: "Embeddings X for “the cat sat”, clear dims, and Query / Key / Value roles.",
+          file: "02_QKVAndDims.mp4",
+        },
+        {
+          id: "scores",
+          title: "3 · Scores → Softmax",
+          blurb: "S = QKᵀ/√d_k entry by entry, then row-wise softmax weights A.",
+          file: "03_ScoresSoftmax.mp4",
+        },
+        {
+          id: "context",
+          title: "4 · Context Vector",
+          blurb: "o_sat = Σ α_j v_j — “sat” borrows most from “cat”; full O = AV.",
+          file: "04_ContextOutput.mp4",
+        },
+      ],
+    },
   ],
 };

@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 # Render Manim scenes at 1080p into exports/1080p/<topic>/
-# Usage (from repo root):
-#   ./scripts/render_all.sh           # all topics
-#   ./scripts/render_all.sh cnn
-#   ./scripts/render_all.sh rnn
-#   QUALITY=l ./scripts/render_all.sh rnn   # quick smoke
+# Usage: ./scripts/render_all.sh [all|cnn|rnn|attention]
 
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -24,7 +20,7 @@ else
 fi
 
 EXPORT_ROOT="$ROOT/exports/1080p"
-mkdir -p "$EXPORT_ROOT/cnn" "$EXPORT_ROOT/rnn"
+mkdir -p "$EXPORT_ROOT/cnn" "$EXPORT_ROOT/rnn" "$EXPORT_ROOT/attention"
 
 case "$QUALITY" in
   l) RES_DIR="480p15" ;;
@@ -51,19 +47,23 @@ declare -a RNN_JOBS=(
   "topics/rnn/theory/tasks.py|RNNTasks|rnn|04_RNNTasks.mp4"
 )
 
+declare -a ATT_JOBS=(
+  "topics/attention/theory/why_attention.py|WhyAttention|attention|01_WhyAttention.mp4"
+  "topics/attention/theory/qkv_dims.py|QKVAndDims|attention|02_QKVAndDims.mp4"
+  "topics/attention/theory/scores_softmax.py|ScoresSoftmax|attention|03_ScoresSoftmax.mp4"
+  "topics/attention/theory/context_output.py|ContextOutput|attention|04_ContextOutput.mp4"
+)
+
 JOBS=()
 case "$TOPIC" in
   all)
-    JOBS=("${CNN_JOBS[@]}" "${RNN_JOBS[@]}")
+    JOBS=("${CNN_JOBS[@]}" "${RNN_JOBS[@]}" "${ATT_JOBS[@]}")
     ;;
-  cnn)
-    JOBS=("${CNN_JOBS[@]}")
-    ;;
-  rnn)
-    JOBS=("${RNN_JOBS[@]}")
-    ;;
+  cnn) JOBS=("${CNN_JOBS[@]}") ;;
+  rnn) JOBS=("${RNN_JOBS[@]}") ;;
+  attention) JOBS=("${ATT_JOBS[@]}") ;;
   *)
-    echo "Unknown topic: $TOPIC (use all|cnn|rnn)" >&2
+    echo "Unknown topic: $TOPIC (use all|cnn|rnn|attention)" >&2
     exit 1
     ;;
 esac

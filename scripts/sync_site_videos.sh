@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 # Copy rendered MP4s into docs/ for GitHub Pages + build ZIP downloads.
-# Expects: exports/1080p/<topic>/0*.mp4
-# Usage (from repo root):
-#   ./scripts/sync_site_videos.sh           # all topics
-#   ./scripts/sync_site_videos.sh cnn
-#   ./scripts/sync_site_videos.sh rnn
+# Usage: ./scripts/sync_site_videos.sh [all|cnn|rnn|attention]
 
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -55,6 +51,11 @@ case "$TOPIC" in
       02_RNNCellMath.mp4 \
       03_UnrollSequence.mp4 \
       04_RNNTasks.mp4
+    sync_topic attention \
+      01_WhyAttention.mp4 \
+      02_QKVAndDims.mp4 \
+      03_ScoresSoftmax.mp4 \
+      04_ContextOutput.mp4
     ;;
   cnn)
     sync_topic cnn \
@@ -71,8 +72,15 @@ case "$TOPIC" in
       03_UnrollSequence.mp4 \
       04_RNNTasks.mp4
     ;;
+  attention)
+    sync_topic attention \
+      01_WhyAttention.mp4 \
+      02_QKVAndDims.mp4 \
+      03_ScoresSoftmax.mp4 \
+      04_ContextOutput.mp4
+    ;;
   *)
-    echo "Unknown topic: $TOPIC (use all|cnn|rnn)" >&2
+    echo "Unknown topic: $TOPIC (use all|cnn|rnn|attention)" >&2
     exit 1
     ;;
 esac
