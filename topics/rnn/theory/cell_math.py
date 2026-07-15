@@ -93,7 +93,6 @@ class RNNCellMath(BrandScene):
         Wxh_block = VGroup(Wxh_lab, Wxh_g).arrange(DOWN, buff=0.1)
         Whh_block = VGroup(Whh_lab, Whh_g).arrange(DOWN, buff=0.1)
 
-        # Result vectors sit on the right and fill entry-by-entry
         u_grid = number_grid([["—"], ["—"]], cell=0.5, color=GREEN_D, font_scale=0.28)
         u_lab = Text("u = W_xh x_t", font="Sans", color=GREEN_D).scale(0.26)
         u_g = VGroup(u_lab, u_grid).arrange(DOWN, buff=0.1)
@@ -103,7 +102,7 @@ class RNNCellMath(BrandScene):
         v_g = VGroup(v_lab, v_grid).arrange(DOWN, buff=0.1)
 
         mats = VGroup(h_g, x_g, Wxh_block, Whh_block, u_g).arrange(RIGHT, buff=0.45)
-        mats.move_to(UP * 0.9 + RIGHT * 0.75)
+        mats.move_to(UP * 0.95 + RIGHT * 0.75)
 
         self.say("Start from previous memory h_{t-1} and current input x_t.", wait=1.4)
         self.play(FadeIn(h_g), FadeIn(x_g), run_time=1.1)
@@ -113,7 +112,8 @@ class RNNCellMath(BrandScene):
         self.play(FadeIn(Wxh_block), FadeIn(Whh_block), FadeIn(u_g), run_time=1.2)
         self.wait(0.9)
 
-        work_anchor = DOWN * 1.25 + RIGHT * 1.4
+        # Work panel: mid-right, away from key and matrices
+        work_anchor = DOWN * 1.05 + RIGHT * 1.5
         work = VGroup()
         rings = VGroup()
 
@@ -126,128 +126,95 @@ class RNNCellMath(BrandScene):
                 anims.append(FadeOut(rings))
             if anims:
                 self.play(*anims, run_time=0.4)
+            if len(work) > 0:
+                self.remove(work)
             work = VGroup()
             if clear_rings:
+                if len(rings) > 0:
+                    self.remove(rings)
                 rings = VGroup()
-
-        def show_work(*mobs):
-            nonlocal work
-            g = VGroup(*mobs).arrange(DOWN, buff=0.16).move_to(work_anchor)
-            work = g
-            self.play(FadeIn(work), run_time=0.7)
-            return g
 
         def light(*mobs):
             nonlocal rings
             new = VGroup(*[yellow_ring(m) for m in mobs])
             if len(rings) > 0:
-                self.play(FadeOut(rings), FadeIn(new), run_time=0.4)
+                self.play(ReplacementTransform(rings, new), run_time=0.4)
             else:
                 self.play(FadeIn(new), run_time=0.4)
             rings = new
+
+        def show_row_formula(eq_line: str, expand_line: str):
+            """Arrange both lines BEFORE showing — never stack at one point."""
+            nonlocal work
+            if len(work) > 0:
+                self.play(FadeOut(work), run_time=0.35)
+                self.remove(work)
+                work = VGroup()
+
+            title = Text(eq_line, font="Sans", color=INK).scale(0.29)
+            expand = Text(expand_line, font="Sans", color=GREEN_D).scale(0.29)
+            block = VGroup(title, expand).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
+            block.move_to(work_anchor)
+            work = block
+
+            # Reveal top line, then green expansion under it (already spaced)
+            self.play(FadeIn(title), run_time=0.7)
+            self.wait(1.0)
+            self.play(FadeIn(expand), run_time=0.75)
+            self.wait(1.1)
 
         def fill_entry(grid: VGroup, idx: int, value: str):
             cell = grid[idx]
             new_txt = Text(value, font="Sans").scale(0.28).set_color(INK).move_to(cell[0])
             old = cell[1]
             self.play(Transform(old, new_txt), run_time=0.7)
-            # keep ring on filled slot briefly
             light(cell)
             self.wait(0.7)
 
-        # ========== u = W_xh @ x_t  (row · column) ==========
+        # ========== u = W_xh @ x_t ==========
         self.say("u = W_xh x_t : each row of W_xh dots the column x_t.", wait=1.6)
 
-        # Row 0
         light(row_group(Wxh_g, 2, 0), x_grid)
-        form0 = Text(
+        show_row_formula(
             "u_0  =  [0.5 ,  −0.3]  ·  [1.0 ,  0.0]",
-            font="Sans",
-            color=INK,
-        ).scale(0.30)
-        expand0 = Text(
-            "     =  0.5×1.0  +  (−0.3)×0.0  =  0.5",
-            font="Sans",
-            color=GREEN_D,
-        ).scale(0.30)
-        show_work(form0)
-        self.wait(1.2)
-        self.play(FadeIn(expand0.next_to(form0, DOWN, buff=0.16)), run_time=0.8)
-        work.add(expand0)
-        self.wait(1.2)
+            "=  0.5×1.0  +  (−0.3)×0.0  =  0.5",
+        )
         fill_entry(u_grid, 0, "0.5")
 
-        # Row 1
-        clear_work()
         light(row_group(Wxh_g, 2, 1), x_grid)
-        form1 = Text(
+        show_row_formula(
             "u_1  =  [0.2 ,  0.4]  ·  [1.0 ,  0.0]",
-            font="Sans",
-            color=INK,
-        ).scale(0.30)
-        expand1 = Text(
-            "     =  0.2×1.0  +  0.4×0.0  =  0.2",
-            font="Sans",
-            color=GREEN_D,
-        ).scale(0.30)
-        show_work(form1)
-        self.wait(1.1)
-        self.play(FadeIn(expand1.next_to(form1, DOWN, buff=0.16)), run_time=0.8)
-        work.add(expand1)
-        self.wait(1.1)
+            "=  0.2×1.0  +  0.4×0.0  =  0.2",
+        )
         fill_entry(u_grid, 1, "0.2")
-        self.wait(1.0)
+        self.wait(0.8)
 
         # ========== v = W_hh @ h ==========
         self.say("Same for v = W_hh h_{t-1} — row of W_hh · column h_{t-1}.", wait=1.5)
         clear_work()
-        # slide u left a bit? keep u, bring v next to it
         v_g.next_to(u_g, RIGHT, buff=0.4)
         self.play(FadeIn(v_g), run_time=0.8)
 
         light(row_group(Whh_g, 2, 0), h_grid)
-        form2 = Text(
+        show_row_formula(
             "v_0  =  [0.6 ,  0.1]  ·  [0.5 ,  −0.2]",
-            font="Sans",
-            color=INK,
-        ).scale(0.30)
-        expand2 = Text(
-            "     =  0.6×0.5  +  0.1×(−0.2)  =  0.28",
-            font="Sans",
-            color=GREEN_D,
-        ).scale(0.30)
-        show_work(form2)
-        self.wait(1.1)
-        self.play(FadeIn(expand2.next_to(form2, DOWN, buff=0.16)), run_time=0.8)
-        work.add(expand2)
-        self.wait(1.1)
+            "=  0.6×0.5  +  0.1×(−0.2)  =  0.28",
+        )
         fill_entry(v_grid, 0, "0.28")
 
-        clear_work()
         light(row_group(Whh_g, 2, 1), h_grid)
-        form3 = Text(
+        show_row_formula(
             "v_1  =  [−0.2 ,  0.5]  ·  [0.5 ,  −0.2]",
-            font="Sans",
-            color=INK,
-        ).scale(0.30)
-        expand3 = Text(
-            "     =  (−0.2)×0.5  +  0.5×(−0.2)  =  −0.20",
-            font="Sans",
-            color=GREEN_D,
-        ).scale(0.28)
-        show_work(form3)
-        self.wait(1.1)
-        self.play(FadeIn(expand3.next_to(form3, DOWN, buff=0.16)), run_time=0.8)
-        work.add(expand3)
-        self.wait(1.1)
+            "=  (−0.2)×0.5  +  0.5×(−0.2)  =  −0.20",
+        )
         fill_entry(v_grid, 1, "−0.20")
-        self.wait(1.0)
+        self.wait(0.8)
 
         # ========== a_t = u + v + b ==========
         self.say("Add bias: a_t = u + v + b_h  (pre-activation).", wait=1.5)
         clear_work()
         self.play(
-            FadeOut(VGroup(h_g, x_g, Wxh_block, Whh_block, formula, u_g, v_g)),
+            FadeOut(VGroup(h_g, x_g, Wxh_block, Whh_block, formula, u_g, v_g, key)),
             run_time=0.6,
         )
 
@@ -270,7 +237,7 @@ class RNNCellMath(BrandScene):
         a_col = VGroup(a_l, a2).arrange(DOWN, buff=0.1)
 
         add_row = VGroup(u_col, plus1, v_col, plus2, b_col, eq, a_col).arrange(RIGHT, buff=0.22)
-        add_row.move_to(UP * 0.7 + RIGHT * 0.6)
+        add_row.move_to(UP * 1.0)
 
         self.play(FadeIn(add_row), run_time=1.2)
         light(u2, v2, b2)
@@ -278,17 +245,23 @@ class RNNCellMath(BrandScene):
         light(a2)
         self.wait(1.2)
 
+        # Final tanh: layout as one arranged column — no leftover green work
         self.say("Apply tanh to each component of a_t → new hidden h_t.", wait=1.5)
         clear_work()
         light(a2)
+
         tanh_line = Text("h_t = tanh(a_t)", font="Sans", weight=BOLD, color=ACCENT).scale(0.4)
         d0 = Text("tanh(0.88) ≈ 0.706", font="Sans", color=INK).scale(0.32)
         d1 = Text("tanh(−0.10) ≈ −0.100", font="Sans", color=INK).scale(0.32)
         h_out = number_grid([[0.706], [-0.100]], cell=0.55, color=ORANGE_D, font_scale=0.28)
         h_out_l = Text("h_t", font="Sans", color=ORANGE_D).scale(0.32)
-        hout = VGroup(h_out_l, h_out).arrange(DOWN, buff=0.1)
-        show_work(tanh_line, d0, d1, hout)
-        self.wait(0.8)
+        hout = VGroup(h_out_l, h_out).arrange(DOWN, buff=0.12)
+
+        finale = VGroup(tanh_line, d0, d1, hout).arrange(DOWN, buff=0.28)
+        finale.move_to(DOWN * 1.15)
+        work = finale
+        self.play(FadeIn(finale), run_time=1.2)
+        self.wait(0.6)
         light(h_out)
         self.set_dims("h_t ∈ R^2")
         self.wait(2.0)
