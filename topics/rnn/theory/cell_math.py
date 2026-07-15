@@ -1,4 +1,4 @@
-"""One RNN timestep — products → sum → tanh, with yellow cell highlights."""
+"""One RNN timestep — row·column formulas fill u and v, then a_t → h_t."""
 
 from __future__ import annotations
 
@@ -34,7 +34,6 @@ def terms_key(lines: list[str]) -> VGroup:
     box.set_fill("#F7F9FB", opacity=1.0)
     g = VGroup(box, body)
     body.move_to(box.get_center())
-    # Above the bottom caption so they never overlap
     g.to_corner(DL, buff=0.18).shift(UP * 0.95)
     return g
 
@@ -43,8 +42,12 @@ def cell_at(grid: VGroup, cols: int, r: int, c: int) -> VGroup:
     return grid[r * cols + c]
 
 
+def row_group(grid: VGroup, cols: int, r: int) -> VGroup:
+    return VGroup(*[cell_at(grid, cols, r, c) for c in range(cols)])
+
+
 def yellow_ring(mobs: VGroup | Mobject) -> SurroundingRectangle:
-    return SurroundingRectangle(mobs, color=GOLD_D, buff=0.04, stroke_width=3.5)
+    return SurroundingRectangle(mobs, color=GOLD_D, buff=0.05, stroke_width=3.5)
 
 
 class RNNCellMath(BrandScene):
@@ -64,18 +67,18 @@ class RNNCellMath(BrandScene):
         self.set_dims("d_x = 2   ·   d_h = 2")
 
         key = terms_key([
-            "x_t — input vector",
+            "x_t — input vector (column)",
             "h_{t-1} — previous hidden",
             "W_xh — input weights",
             "W_hh — recurrent weights",
             "b_h — bias",
             "a_t — pre-activation",
+            "u = W_xh x_t   (row · column)",
+            "v = W_hh h_{t-1}",
             "h_t — new hidden state",
-            "u = W_xh x_t   v = W_hh h_{t-1}",
         ])
         self.play(FadeIn(key), run_time=0.8)
 
-        # ---- vectors & matrices (upper mid band) ----
         h_grid = number_grid([[0.5], [-0.2]], cell=0.5, color=ORANGE_D, font_scale=0.28)
         x_grid = number_grid([[1.0], [0.0]], cell=0.5, color=BLUE_D, font_scale=0.28)
         h_lab = Text("h_{t-1}", font="Sans", color=ORANGE_D).scale(0.28)
@@ -90,37 +93,46 @@ class RNNCellMath(BrandScene):
         Wxh_block = VGroup(Wxh_lab, Wxh_g).arrange(DOWN, buff=0.1)
         Whh_block = VGroup(Whh_lab, Whh_g).arrange(DOWN, buff=0.1)
 
-        mats = VGroup(h_g, x_g, Wxh_block, Whh_block).arrange(RIGHT, buff=0.55)
-        mats.move_to(UP * 0.85 + RIGHT * 0.55)
+        # Result vectors sit on the right and fill entry-by-entry
+        u_grid = number_grid([["—"], ["—"]], cell=0.5, color=GREEN_D, font_scale=0.28)
+        u_lab = Text("u = W_xh x_t", font="Sans", color=GREEN_D).scale(0.26)
+        u_g = VGroup(u_lab, u_grid).arrange(DOWN, buff=0.1)
+
+        v_grid = number_grid([["—"], ["—"]], cell=0.5, color=GREEN_D, font_scale=0.26)
+        v_lab = Text("v = W_hh h_{t-1}", font="Sans", color=GREEN_D).scale(0.24)
+        v_g = VGroup(v_lab, v_grid).arrange(DOWN, buff=0.1)
+
+        mats = VGroup(h_g, x_g, Wxh_block, Whh_block, u_g).arrange(RIGHT, buff=0.45)
+        mats.move_to(UP * 0.9 + RIGHT * 0.75)
 
         self.say("Start from previous memory h_{t-1} and current input x_t.", wait=1.4)
         self.play(FadeIn(h_g), FadeIn(x_g), run_time=1.1)
         self.wait(0.8)
 
         self.say("Weights are shared across all times — same W every step.", wait=1.4)
-        self.play(FadeIn(Wxh_block), FadeIn(Whh_block), run_time=1.1)
+        self.play(FadeIn(Wxh_block), FadeIn(Whh_block), FadeIn(u_g), run_time=1.2)
         self.wait(0.9)
 
-        # Dedicated work band under matrices (right of terms key; never overlaps grids)
-        work_anchor = DOWN * 1.2 + RIGHT * 1.35
+        work_anchor = DOWN * 1.25 + RIGHT * 1.4
         work = VGroup()
         rings = VGroup()
 
-        def clear_work():
+        def clear_work(clear_rings: bool = True):
             nonlocal work, rings
             anims = []
             if len(work) > 0:
                 anims.append(FadeOut(work))
-            if len(rings) > 0:
+            if clear_rings and len(rings) > 0:
                 anims.append(FadeOut(rings))
             if anims:
-                self.play(*anims, run_time=0.45)
+                self.play(*anims, run_time=0.4)
             work = VGroup()
-            rings = VGroup()
+            if clear_rings:
+                rings = VGroup()
 
         def show_work(*mobs):
             nonlocal work
-            g = VGroup(*mobs).arrange(DOWN, buff=0.18).move_to(work_anchor)
+            g = VGroup(*mobs).arrange(DOWN, buff=0.16).move_to(work_anchor)
             work = g
             self.play(FadeIn(work), run_time=0.7)
             return g
@@ -129,104 +141,113 @@ class RNNCellMath(BrandScene):
             nonlocal rings
             new = VGroup(*[yellow_ring(m) for m in mobs])
             if len(rings) > 0:
-                self.play(FadeOut(rings), FadeIn(new), run_time=0.45)
+                self.play(FadeOut(rings), FadeIn(new), run_time=0.4)
             else:
-                self.play(FadeIn(new), run_time=0.45)
+                self.play(FadeIn(new), run_time=0.4)
             rings = new
 
-        # ========== W_xh @ x : row 0 ==========
-        self.say("First: W_xh × x_t — highlight cells, then each product, then sum.", wait=1.5)
+        def fill_entry(grid: VGroup, idx: int, value: str):
+            cell = grid[idx]
+            new_txt = Text(value, font="Sans").scale(0.28).set_color(INK).move_to(cell[0])
+            old = cell[1]
+            self.play(Transform(old, new_txt), run_time=0.7)
+            # keep ring on filled slot briefly
+            light(cell)
+            self.wait(0.7)
 
-        # product 1: W[0,0] * x[0]
-        light(cell_at(Wxh_g, 2, 0, 0), cell_at(x_grid, 1, 0, 0))
-        p1 = Text("0.5  ×  1.0  =  0.5", font="Sans", color=INK).scale(0.34)
-        show_work(p1)
-        self.wait(1.1)
+        # ========== u = W_xh @ x_t  (row · column) ==========
+        self.say("u = W_xh x_t : each row of W_xh dots the column x_t.", wait=1.6)
 
-        # product 2: W[0,1] * x[1]
-        clear_work()
-        light(cell_at(Wxh_g, 2, 0, 1), cell_at(x_grid, 1, 1, 0))
-        p2 = Text("(−0.3)  ×  0.0  =  0", font="Sans", color=INK).scale(0.34)
-        show_work(p2)
-        self.wait(1.1)
-
-        # sum row 0
-        clear_work()
-        light(cell_at(Wxh_g, 2, 0, 0), cell_at(Wxh_g, 2, 0, 1), x_grid)
-        s0 = Text("row 0 sum:  0.5 + 0  =  0.5", font="Sans", color=GREEN_D).scale(0.34)
-        show_work(s0)
+        # Row 0
+        light(row_group(Wxh_g, 2, 0), x_grid)
+        form0 = Text(
+            "u_0  =  [0.5 ,  −0.3]  ·  [1.0 ,  0.0]",
+            font="Sans",
+            color=INK,
+        ).scale(0.30)
+        expand0 = Text(
+            "     =  0.5×1.0  +  (−0.3)×0.0  =  0.5",
+            font="Sans",
+            color=GREEN_D,
+        ).scale(0.30)
+        show_work(form0)
         self.wait(1.2)
-
-        # ========== W_xh @ x : row 1 ==========
-        clear_work()
-        light(cell_at(Wxh_g, 2, 1, 0), cell_at(x_grid, 1, 0, 0))
-        p3 = Text("0.2  ×  1.0  =  0.2", font="Sans", color=INK).scale(0.34)
-        show_work(p3)
-        self.wait(1.0)
-
-        clear_work()
-        light(cell_at(Wxh_g, 2, 1, 1), cell_at(x_grid, 1, 1, 0))
-        p4 = Text("0.4  ×  0.0  =  0", font="Sans", color=INK).scale(0.34)
-        show_work(p4)
-        self.wait(1.0)
-
-        clear_work()
-        light(cell_at(Wxh_g, 2, 1, 0), cell_at(Wxh_g, 2, 1, 1), x_grid)
-        s1 = Text("row 1 sum:  0.2 + 0  =  0.2", font="Sans", color=GREEN_D).scale(0.34)
-        u_grid = number_grid([[0.5], [0.2]], cell=0.48, color=GREEN_D, font_scale=0.26)
-        u_lab = Text("u = W_xh x_t", font="Sans", color=GREEN_D).scale(0.28)
-        u_g = VGroup(u_lab, u_grid).arrange(DOWN, buff=0.1)
-        show_work(s1, u_g)
-        self.wait(1.4)
-
-        # ========== W_hh @ h : row 0 ==========
-        self.say("Next: W_hh × h_{t-1} — same idea, new cells light yellow.", wait=1.5)
-        clear_work()
-
-        light(cell_at(Whh_g, 2, 0, 0), cell_at(h_grid, 1, 0, 0))
-        q1 = Text("0.6  ×  0.5  =  0.30", font="Sans", color=INK).scale(0.34)
-        show_work(q1)
-        self.wait(1.1)
-
-        clear_work()
-        light(cell_at(Whh_g, 2, 0, 1), cell_at(h_grid, 1, 1, 0))
-        q2 = Text("0.1  ×  (−0.2)  =  −0.02", font="Sans", color=INK).scale(0.34)
-        show_work(q2)
-        self.wait(1.1)
-
-        clear_work()
-        light(cell_at(Whh_g, 2, 0, 0), cell_at(Whh_g, 2, 0, 1), h_grid)
-        qs0 = Text("row 0 sum:  0.30 + (−0.02)  =  0.28", font="Sans", color=GREEN_D).scale(0.32)
-        show_work(qs0)
+        self.play(FadeIn(expand0.next_to(form0, DOWN, buff=0.16)), run_time=0.8)
+        work.add(expand0)
         self.wait(1.2)
+        fill_entry(u_grid, 0, "0.5")
 
-        # ========== W_hh @ h : row 1 ==========
+        # Row 1
         clear_work()
-        light(cell_at(Whh_g, 2, 1, 0), cell_at(h_grid, 1, 0, 0))
-        q3 = Text("(−0.2)  ×  0.5  =  −0.10", font="Sans", color=INK).scale(0.34)
-        show_work(q3)
+        light(row_group(Wxh_g, 2, 1), x_grid)
+        form1 = Text(
+            "u_1  =  [0.2 ,  0.4]  ·  [1.0 ,  0.0]",
+            font="Sans",
+            color=INK,
+        ).scale(0.30)
+        expand1 = Text(
+            "     =  0.2×1.0  +  0.4×0.0  =  0.2",
+            font="Sans",
+            color=GREEN_D,
+        ).scale(0.30)
+        show_work(form1)
+        self.wait(1.1)
+        self.play(FadeIn(expand1.next_to(form1, DOWN, buff=0.16)), run_time=0.8)
+        work.add(expand1)
+        self.wait(1.1)
+        fill_entry(u_grid, 1, "0.2")
         self.wait(1.0)
 
+        # ========== v = W_hh @ h ==========
+        self.say("Same for v = W_hh h_{t-1} — row of W_hh · column h_{t-1}.", wait=1.5)
         clear_work()
-        light(cell_at(Whh_g, 2, 1, 1), cell_at(h_grid, 1, 1, 0))
-        q4 = Text("0.5  ×  (−0.2)  =  −0.10", font="Sans", color=INK).scale(0.34)
-        show_work(q4)
-        self.wait(1.0)
+        # slide u left a bit? keep u, bring v next to it
+        v_g.next_to(u_g, RIGHT, buff=0.4)
+        self.play(FadeIn(v_g), run_time=0.8)
+
+        light(row_group(Whh_g, 2, 0), h_grid)
+        form2 = Text(
+            "v_0  =  [0.6 ,  0.1]  ·  [0.5 ,  −0.2]",
+            font="Sans",
+            color=INK,
+        ).scale(0.30)
+        expand2 = Text(
+            "     =  0.6×0.5  +  0.1×(−0.2)  =  0.28",
+            font="Sans",
+            color=GREEN_D,
+        ).scale(0.30)
+        show_work(form2)
+        self.wait(1.1)
+        self.play(FadeIn(expand2.next_to(form2, DOWN, buff=0.16)), run_time=0.8)
+        work.add(expand2)
+        self.wait(1.1)
+        fill_entry(v_grid, 0, "0.28")
 
         clear_work()
-        light(cell_at(Whh_g, 2, 1, 0), cell_at(Whh_g, 2, 1, 1), h_grid)
-        qs1 = Text("row 1 sum:  (−0.10) + (−0.10)  =  −0.20", font="Sans", color=GREEN_D).scale(0.30)
-        v_grid = number_grid([[0.28], [-0.20]], cell=0.48, color=GREEN_D, font_scale=0.24)
-        v_lab = Text("v = W_hh h_{t-1}", font="Sans", color=GREEN_D).scale(0.26)
-        v_g = VGroup(v_lab, v_grid).arrange(DOWN, buff=0.1)
-        show_work(qs1, v_g)
-        self.wait(1.4)
+        light(row_group(Whh_g, 2, 1), h_grid)
+        form3 = Text(
+            "v_1  =  [−0.2 ,  0.5]  ·  [0.5 ,  −0.2]",
+            font="Sans",
+            color=INK,
+        ).scale(0.30)
+        expand3 = Text(
+            "     =  (−0.2)×0.5  +  0.5×(−0.2)  =  −0.20",
+            font="Sans",
+            color=GREEN_D,
+        ).scale(0.28)
+        show_work(form3)
+        self.wait(1.1)
+        self.play(FadeIn(expand3.next_to(form3, DOWN, buff=0.16)), run_time=0.8)
+        work.add(expand3)
+        self.wait(1.1)
+        fill_entry(v_grid, 1, "−0.20")
+        self.wait(1.0)
 
         # ========== a_t = u + v + b ==========
         self.say("Add bias: a_t = u + v + b_h  (pre-activation).", wait=1.5)
         clear_work()
         self.play(
-            FadeOut(VGroup(h_g, x_g, Wxh_block, Whh_block, formula)),
+            FadeOut(VGroup(h_g, x_g, Wxh_block, Whh_block, formula, u_g, v_g)),
             run_time=0.6,
         )
 
@@ -257,7 +278,6 @@ class RNNCellMath(BrandScene):
         light(a2)
         self.wait(1.2)
 
-        # ========== tanh ==========
         self.say("Apply tanh to each component of a_t → new hidden h_t.", wait=1.5)
         clear_work()
         light(a2)
