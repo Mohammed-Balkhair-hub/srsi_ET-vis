@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Copy rendered MP4s into docs/ for GitHub Pages + build ZIP downloads.
+# Expects: exports/1080p/<topic>/0*.mp4
 # Usage (from repo root):
 #   ./scripts/sync_site_videos.sh           # all topics
 #   ./scripts/sync_site_videos.sh cnn
@@ -7,12 +8,13 @@
 
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SRC="$ROOT/exports/1080p"
+SRC_ROOT="$ROOT/exports/1080p"
 TOPIC="${1:-all}"
 
 sync_topic() {
   local id="$1"
   shift
+  local src="$SRC_ROOT/$id"
   local vid="$ROOT/docs/videos/$id"
   local zip="$ROOT/docs/downloads/${id}-videos.zip"
   mkdir -p "$vid" "$ROOT/docs/downloads"
@@ -20,7 +22,7 @@ sync_topic() {
   local files=()
   local name
   for name in "$@"; do
-    local f="$SRC/$name"
+    local f="$src/$name"
     if [[ ! -f "$f" ]]; then
       echo "ERROR: missing $f — run ./scripts/render_all.sh $id first" >&2
       exit 1

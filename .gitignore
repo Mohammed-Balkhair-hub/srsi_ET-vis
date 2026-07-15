@@ -20,6 +20,7 @@ media/
 .partial_movie_files/
 
 # Local render scratch (site copies live under docs/videos/)
+exports/1080p/**/*.mp4
 exports/1080p/*.mp4
 
 # OS / editor

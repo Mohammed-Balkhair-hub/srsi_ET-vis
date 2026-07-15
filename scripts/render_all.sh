@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Render Manim scenes at 1080p into exports/1080p/
+# Render Manim scenes at 1080p into exports/1080p/<topic>/
 # Usage (from repo root):
 #   ./scripts/render_all.sh           # all topics
 #   ./scripts/render_all.sh cnn
@@ -23,8 +23,8 @@ else
   exit 1
 fi
 
-EXPORT_DIR="$ROOT/exports/1080p"
-mkdir -p "$EXPORT_DIR"
+EXPORT_ROOT="$ROOT/exports/1080p"
+mkdir -p "$EXPORT_ROOT/cnn" "$EXPORT_ROOT/rnn"
 
 case "$QUALITY" in
   l) RES_DIR="480p15" ;;
@@ -37,18 +37,18 @@ esac
 echo "Using: $MANIM ($FLAG → $RES_DIR) topic=$TOPIC"
 
 declare -a CNN_JOBS=(
-  "topics/cnn/theory/why_cnn.py|WhyCNNs|01_WhyCNNs.mp4"
-  "topics/cnn/theory/convolution.py|ConvolutionMath|02_ConvolutionMath.mp4"
-  "topics/cnn/theory/padding_stride.py|PaddingAndStride|03_PaddingAndStride.mp4"
-  "topics/cnn/theory/pooling.py|Pooling|04_Pooling.mp4"
-  "topics/cnn/theory/architecture.py|CNNPipeline|05_CNNPipeline.mp4"
+  "topics/cnn/theory/why_cnn.py|WhyCNNs|cnn|01_WhyCNNs.mp4"
+  "topics/cnn/theory/convolution.py|ConvolutionMath|cnn|02_ConvolutionMath.mp4"
+  "topics/cnn/theory/padding_stride.py|PaddingAndStride|cnn|03_PaddingAndStride.mp4"
+  "topics/cnn/theory/pooling.py|Pooling|cnn|04_Pooling.mp4"
+  "topics/cnn/theory/architecture.py|CNNPipeline|cnn|05_CNNPipeline.mp4"
 )
 
 declare -a RNN_JOBS=(
-  "topics/rnn/theory/why_rnn.py|WhyRNNs|01_WhyRNNs.mp4"
-  "topics/rnn/theory/cell_math.py|RNNCellMath|02_RNNCellMath.mp4"
-  "topics/rnn/theory/unroll.py|UnrollSequence|03_UnrollSequence.mp4"
-  "topics/rnn/theory/tasks.py|RNNTasks|04_RNNTasks.mp4"
+  "topics/rnn/theory/why_rnn.py|WhyRNNs|rnn|01_WhyRNNs.mp4"
+  "topics/rnn/theory/cell_math.py|RNNCellMath|rnn|02_RNNCellMath.mp4"
+  "topics/rnn/theory/unroll.py|UnrollSequence|rnn|03_UnrollSequence.mp4"
+  "topics/rnn/theory/tasks.py|RNNTasks|rnn|04_RNNTasks.mp4"
 )
 
 JOBS=()
@@ -69,7 +69,7 @@ case "$TOPIC" in
 esac
 
 for job in "${JOBS[@]}"; do
-  IFS='|' read -r file scene export_name <<<"$job"
+  IFS='|' read -r file scene topic_id export_name <<<"$job"
   module="$(basename "$file" .py)"
   echo ""
   echo "======== $scene ========"
@@ -79,8 +79,10 @@ for job in "${JOBS[@]}"; do
     echo "ERROR: missing $src_mp4" >&2
     exit 1
   fi
-  cp -f "$src_mp4" "$EXPORT_DIR/$export_name"
-  echo "→ exports/1080p/$export_name"
+  dest="$EXPORT_ROOT/$topic_id/$export_name"
+  mkdir -p "$(dirname "$dest")"
+  cp -f "$src_mp4" "$dest"
+  echo "→ exports/1080p/$topic_id/$export_name"
 done
 
 echo ""

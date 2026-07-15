@@ -32,7 +32,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 chmod +x scripts/*.sh
-./scripts/render_all.sh rnn      # or cnn | all  → exports/1080p/
+./scripts/render_all.sh rnn      # or cnn | all  → exports/1080p/<topic>/
 ./scripts/sync_site_videos.sh rnn
 ```
 
@@ -55,6 +55,9 @@ srsi_ET-vis/
 │   ├── videos/cnn/  videos/rnn/
 │   ├── downloads/
 │   ├── css/  js/  img/
+├── exports/1080p/
+│   ├── cnn/                  # local CNN renders
+│   └── rnn/                  # local RNN renders
 ├── topics/cnn/               # Manim sources
 ├── topics/rnn/
 ├── assets/
