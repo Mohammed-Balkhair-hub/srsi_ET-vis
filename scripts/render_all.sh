@@ -38,6 +38,7 @@ declare -a CNN_JOBS=(
   "topics/cnn/theory/padding_stride.py|PaddingAndStride|cnn|03_PaddingAndStride.mp4"
   "topics/cnn/theory/pooling.py|Pooling|cnn|04_Pooling.mp4"
   "topics/cnn/theory/architecture.py|CNNPipeline|cnn|05_CNNPipeline.mp4"
+  "topics/cnn/theory/pretrained.py|PretrainedModels|cnn|06_PretrainedModels.mp4"
 )
 
 declare -a RNN_JOBS=(

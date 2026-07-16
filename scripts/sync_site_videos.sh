@@ -45,7 +45,8 @@ case "$TOPIC" in
       02_ConvolutionMath.mp4 \
       03_PaddingAndStride.mp4 \
       04_Pooling.mp4 \
-      05_CNNPipeline.mp4
+      05_CNNPipeline.mp4 \
+      06_PretrainedModels.mp4
     sync_topic rnn \
       01_WhyRNNs.mp4 \
       02_RNNCellMath.mp4 \
@@ -62,7 +63,8 @@ case "$TOPIC" in
       02_ConvolutionMath.mp4 \
       03_PaddingAndStride.mp4 \
       04_Pooling.mp4 \
-      05_CNNPipeline.mp4
+      05_CNNPipeline.mp4 \
+      06_PretrainedModels.mp4
     ;;
   rnn)
     sync_topic rnn \

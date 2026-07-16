@@ -18,7 +18,7 @@ If the live site 404s, enable Pages once: **Settings → Pages → Deploy from a
 
 | Topic | Status |
 |-------|--------|
-| [Convolutional Neural Networks](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/cnn.html) | Available — 5 sections, [ZIP](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/downloads/cnn-videos.zip) |
+| [Convolutional Neural Networks](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/cnn.html) | Available — 6 sections, [ZIP](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/downloads/cnn-videos.zip) |
 | [Recurrent Neural Networks](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/rnn.html) | Available — 4 sections, [ZIP](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/downloads/rnn-videos.zip) |
 | [Attention](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/topics/attention.html) | Available — 3 sections, [ZIP](https://Mohammed-Balkhair-hub.github.io/srsi_ET-vis/downloads/attention-videos.zip) |
 

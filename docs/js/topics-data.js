@@ -5,7 +5,7 @@ window.SRSI = {
     {
       id: "cnn",
       title: "Convolutional Neural Networks",
-      blurb: "Kernels, padding, pooling, and the full forward pipeline — watch each section in order.",
+      blurb: "Kernels, padding, pooling, pipeline, and pretrained transfer — features, new heads, embeddings.",
       status: "available",
       href: "topics/cnn.html",
       zip: "downloads/cnn-videos.zip",
@@ -40,6 +40,12 @@ window.SRSI = {
           title: "5 · CNN Pipeline",
           blurb: "Conv → BN → ReLU → Pool → Flatten → FC → Softmax, with shapes updating live.",
           file: "05_CNNPipeline.mp4",
+        },
+        {
+          id: "pretrained",
+          title: "6 · Pretrained & Embeddings",
+          blurb: "Frozen backbone, swap the head for your classes, or use embeddings + cosine similarity.",
+          file: "06_PretrainedModels.mp4",
         },
       ],
     },
