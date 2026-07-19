@@ -91,6 +91,12 @@ def matrix2x2(entries, colors=None, col_w: float = 1.15, row_h: float = 0.7, sca
 class DPPDeterminantVolume(BrandScene):
     chapter_title = "DPP · Determinant = Volume"
 
+    def say(self, msg: str, wait: float = 1.4) -> None:
+        """Hold each caption long enough to actually read it (reading-time based)."""
+        words = len(msg.split())
+        read = max(wait, 0.36 * words + 1.4)
+        super().say(msg, wait=read)
+
     def construct(self):
         self.setup_branding()
         if self.dims is not None:
