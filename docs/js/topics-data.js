@@ -113,5 +113,22 @@ window.SRSI = {
         },
       ],
     },
+    {
+      id: "mdp3",
+      title: "Video Frame Selection (MDP3)",
+      blurb: "Choosing k frames for a Video-LLM: the DPP scores a whole set by volume — determinant = volume = diversity.",
+      status: "available",
+      href: "topics/mdp3.html",
+      zip: "downloads/mdp3-videos.zip",
+      videoDir: "videos/mdp3",
+      sections: [
+        {
+          id: "dpp-volume",
+          title: "1 · DPP: Determinant = Volume",
+          blurb: "A duplicate flattens the box vectors span, so det → 0; P(S) ∝ det(L̃_S) rewards relevant, diverse sets.",
+          file: "01_DPPVolume.mp4",
+        },
+      ],
+    },
   ],
 };

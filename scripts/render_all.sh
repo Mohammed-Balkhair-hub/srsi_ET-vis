@@ -20,7 +20,7 @@ else
 fi
 
 EXPORT_ROOT="$ROOT/exports/1080p"
-mkdir -p "$EXPORT_ROOT/cnn" "$EXPORT_ROOT/rnn" "$EXPORT_ROOT/attention"
+mkdir -p "$EXPORT_ROOT/cnn" "$EXPORT_ROOT/rnn" "$EXPORT_ROOT/attention" "$EXPORT_ROOT/mdp3"
 
 case "$QUALITY" in
   l) RES_DIR="480p15" ;;
@@ -54,16 +54,21 @@ declare -a ATT_JOBS=(
   "topics/attention/theory/context_output.py|ContextOutput|attention|03_ContextOutput.mp4"
 )
 
+declare -a MDP3_JOBS=(
+  "topics/mdp3/theory/dpp_volume.py|DPPDeterminantVolume|mdp3|01_DPPVolume.mp4"
+)
+
 JOBS=()
 case "$TOPIC" in
   all)
-    JOBS=("${CNN_JOBS[@]}" "${RNN_JOBS[@]}" "${ATT_JOBS[@]}")
+    JOBS=("${CNN_JOBS[@]}" "${RNN_JOBS[@]}" "${ATT_JOBS[@]}" "${MDP3_JOBS[@]}")
     ;;
   cnn) JOBS=("${CNN_JOBS[@]}") ;;
   rnn) JOBS=("${RNN_JOBS[@]}") ;;
   attention) JOBS=("${ATT_JOBS[@]}") ;;
+  mdp3) JOBS=("${MDP3_JOBS[@]}") ;;
   *)
-    echo "Unknown topic: $TOPIC (use all|cnn|rnn|attention)" >&2
+    echo "Unknown topic: $TOPIC (use all|cnn|rnn|attention|mdp3)" >&2
     exit 1
     ;;
 esac

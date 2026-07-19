@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Video Frame Selection (MDP3) · SRSI Emerging Technologies Track</title>
+    <meta
+      name="description"
+      content="How MDP3 chooses frames for Video-LLMs — the DPP scores a whole set by volume: determinant = volume = diversity."
+    />
+    <link rel="stylesheet" href="../css/site.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="brand" href="../index.html">
+          <img src="../img/kaust-academy.png" alt="KAUST Academy" />
+          <div class="brand-text">
+            <strong>KAUST Academy</strong>
+            <span>SRSI Emerging Technologies Track</span>
+          </div>
+        </a>
+        <a class="nav-link" href="../index.html">← All topics</a>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <div class="topic-hero" id="topic-hero">
+        <!-- filled by JS -->
+      </div>
+
+      <nav class="section-nav" id="section-nav" aria-label="Sections"></nav>
+      <div id="sections"></div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <strong>KAUST Academy</strong> · SRSI Emerging Technologies Track · MDP3 module
+      </div>
+    </footer>
+
+    <script src="../js/topics-data.js"></script>
+    <script>
+      (function () {
+        const topic = (window.SRSI.topics || []).find((t) => t.id === "mdp3");
+        if (!topic) return;
+
+        const hero = document.getElementById("topic-hero");
+        hero.innerHTML = `
+          <div>
+            <div class="hero-kicker">Module · MDP3</div>
+            <h1>${topic.title}</h1>
+            <p class="lede">${topic.blurb}</p>
+          </div>
+          <div class="topic-actions">
+            <a class="btn btn-orange" href="../${topic.zip}" download>Download all videos (.zip)</a>
+            <a class="btn btn-ghost" href="#${topic.sections[0].id}">Start watching</a>
+          </div>
+        `;
+
+        const nav = document.getElementById("section-nav");
+        nav.innerHTML = topic.sections
+          .map(
+            (s, i) =>
+              `<a href="#${s.id}"${i === 0 ? ' class="is-active"' : ""}>${s.title.replace(/^(\d+)\s*·\s*/, "$1 · ")}</a>`
+          )
+          .join("");
+
+        const root = document.getElementById("sections");
+        root.innerHTML = topic.sections
+          .map((s) => {
+            const src = `../${topic.videoDir}/${s.file}`;
+            return `
+            <article class="lesson-section" id="${s.id}" data-reveal>
+              <header>
+                <h2>${s.title}</h2>
+                <a class="btn btn-ghost btn-sm" href="${src}" download>Download video</a>
+              </header>
+              <p class="blurb">${s.blurb}</p>
+              <div class="video-shell">
+                <video class="lesson-video" controls preload="metadata" playsinline src="${src}">
+                  Your browser does not support HTML5 video.
+                </video>
+              </div>
+            </article>`;
+          })
+          .join("");
+      })();
+    </script>
+    <script src="../js/site.js"></script>
+  </body>
+</html>

@@ -56,6 +56,8 @@ case "$TOPIC" in
       01_WhyAttention.mp4 \
       02_QKVScores.mp4 \
       03_ContextOutput.mp4
+    sync_topic mdp3 \
+      01_DPPVolume.mp4
     ;;
   cnn)
     sync_topic cnn \
@@ -79,8 +81,12 @@ case "$TOPIC" in
       02_QKVScores.mp4 \
       03_ContextOutput.mp4
     ;;
+  mdp3)
+    sync_topic mdp3 \
+      01_DPPVolume.mp4
+    ;;
   *)
-    echo "Unknown topic: $TOPIC (use all|cnn|rnn|attention)" >&2
+    echo "Unknown topic: $TOPIC (use all|cnn|rnn|attention|mdp3)" >&2
     exit 1
     ;;
 esac
